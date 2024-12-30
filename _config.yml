@@ -239,7 +239,6 @@ defaults:
       comments: true
       share: true
       related: true
-      alignment: right
   # _pages
   - scope:
       path: ""
@@ -247,7 +246,6 @@ defaults:
     values:
       layout: single
       author_profile: true
-      alignment: right
   # _teaching
   - scope:
       path: ""
@@ -275,7 +273,6 @@ defaults:
       author_profile: true
       share: true
       comment: true
-      alignment: right
   # _talks
   - scope:
       path: ""
