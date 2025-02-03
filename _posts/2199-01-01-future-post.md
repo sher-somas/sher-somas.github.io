@@ -156,8 +156,8 @@ First, we'll have to write a script to interface with the models running using O
 
 There python class need two methods.
 
-- 1. To generate the raw response
-- 2. To generate a structured response
+- To generate the raw response
+- To generate a structured response
 
 I'll explain why need a structured response in a while.
 
@@ -294,10 +294,66 @@ if __name__ == "__main__":
 
 ```
 
-<mark>Given a dataset, we'll run them through a smaller 1B parameter models and generate their responses.</mark>
 
-## Sequel
+## Moving on...
+
 
 The recorded responses will then be <mark>Judged using a 8B parameter LLM.</mark>
+
+Why use a larger model as a judge to evaluate the performance of smaller models? 
+
+A larger model is often used as a "judge" or evaluation baseline for smaller models due to several reasons:
+
+1. **Better Generalization**: Larger models have been trained on more data, which enables them to generalize better across various tasks and datasets. They can recognize patterns and relationships that may be difficult for smaller models to detect.
+2. **More Comprehensive Knowledge Base**: A larger model has a broader knowledge base due to its extensive training on diverse texts, making it a better representation of the language distribution. This allows it to serve as an evaluation baseline for smaller models, providing a more accurate assessment of their performance.
+3. **Reduced Overfitting**: Smaller models are often prone to overfitting, where they become too specialized in the specific task or dataset and fail to generalize well to new data. A larger model can help mitigate this issue by serving as an evaluation baseline that has seen a broader range of tasks and datasets.
+4. **Reducing Model Selection Bias**: When using a smaller model for evaluation, there's a risk of selection bias – where the evaluation results are influenced by the specific characteristics or features of the smaller model. A larger model can help reduce this bias by providing an unbiased evaluation baseline that is less dependent on the smaller model's properties.
+5. **Improved Evaluation Metrics**: Larger models tend to have more accurate and reliable evaluation metrics, such as perplexity scores or ROUGE scores. These metrics provide a more comprehensive understanding of a model's performance, allowing for better comparisons between different models.
+
+By using a larger model as an evaluation baseline, researchers and developers can:
+
+* Evaluate smaller models' performance in a more robust and comprehensive manner.
+* Identify areas where smaller models may be struggling to generalize or capture key knowledge.
+* Fine-tune smaller models to improve their performance and adapt them to specific tasks or datasets.
+
+This approach enables the development of more accurate and reliable evaluation methods, ultimately leading to better-performing language models.
+
+okay.. how shall we do it?
+
+The same way we did before but with some minor changes.
+
+In the previous code, when designing the LLMClient class, we wrote a method called output_with_tool. If you paid attention to the parameters passed to that method, we passed in a custom response model and an evaluation prompt. This evaluation prompt will play a key role in evaluating the response generated to the prompt.
+
+### Let's visualize
+
+![judge](/assets/images/judge.png)
+
+Here's the rephrased text to be added to a blog:
+
+**Evaluating Model Performance: The Judge's Role**
+
+To assess the quality of our LLM's responses, we take an extra step by using a much larger LLM in a new capacity - as a judge. We prompt the judge model with the same input that generated the response, as well as the response itself. This time, however, we configure the system to evaluate the response from a critical perspective.
+
+By doing so, our LLM is tasked with assessing its own performance, providing valuable insights into:
+
+* The relevance of its generated response to the original prompt
+* The accuracy of its response in addressing the user's query
+* Whether it has "hallucinated" information that isn't supported by the input data
+
+This approach allows us to gauge our model's strengths and weaknesses, ultimately refining its performance and producing more accurate and informative responses.
+
+In this case, we choose a llama3.1 8B model as our judge since it is available in Ollama.
+
+### Evaluator
+
+Let's build an Evaluator based on the above diagram which will utilize the LLMClient class which we've seen earlier. The Evaluator will have methods to evaluate each of the following metrics: relevance, accuracy and hallucination.
+
+To enhance the efficacy of our response evaluation, we propose utilizing more advanced reasoning models to generate comprehensive evaluation prompts. The carefully crafted nature of these prompts is essential in ensuring the accuracy and reliability of our assessment process.
+
+Following an iterative approach that involved extensive trial and error with larger language models, I have developed a set of highly detailed evaluation prompts using DeepSeek. These prompts were designed to capture nuanced aspects of the response and serve as a benchmark for evaluating its quality and relevance.
+
+We will now configure the Evaluator's system behavior to utilize the refined prompts, enabling it to effectively assess the output from the previously developed models.
+
+The evaluation prompts are in the evaluation_prompt.py file of the [codebase.](https://github.com/sher-somas/LLM-as-judge)
 
 
